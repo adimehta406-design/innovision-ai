@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="TruthLens – AI-powered Fake News Visual Analyzer. Detect image manipulation, misinformation, and AI-generated content in seconds.">
+    <title>Innovision – Universal Fake News Verifier</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./logo.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="./logo.png" alt="Innovision Logo" class="logo-img" style="height: 40px; margin-right: 10px;">
+            <span class="logo-text">Innovision</span>
+            <span class="logo-badge">v2.0 PRO</span>
+        </a>
+        <nav class="header-links">
+            <a href="https://github.com" class="header-link" target="_blank">⭐ GitHub</a>
+            <a href="#features" class="header-link">Features</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="hero-logo-container">
+            <div class="scanner-line"></div>
+            <img src="./logo-big.png" alt="Innovision AI" class="hero-logo-img">
+            <div class="hero-glow"></div>
+        </div>
+        <h1>Unmask Visual Misinformation</h1>
+        <p>Advanced forensic analysis to detect manipulated images, fake screenshots, and Deepfakes.</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value">6</div>
+                <div class="hero-stat-label">Neural Engines</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">&lt;5s</div>
+                <div class="hero-stat-label">Analysis Time</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">99%</div>
+                <div class="hero-stat-label">Accuracy</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Zone -->
+    <section class="upload-section" id="upload-section">
+
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('image')" id="tab-image">Image Analysis</button>
+            <button class="tab-btn" onclick="switchTab('text')" id="tab-text">Text Verification</button>
+        </div>
+
+        <!-- Image Input -->
+        <div id="image-section" class="input-section active">
+            <div class="upload-zone" id="upload-zone">
+                <span class="upload-icon">🖼️</span>
+                <div class="upload-text">
+                    <h3>Drop an image or screenshot here</h3>
+                    <p>or <span class="browse-btn" onclick="document.getElementById('file-input').click()">browse
+                            files</span></p>
+                </div>
+                <div class="upload-formats">
+                    <span class="format-tag">JPEG</span>
+                    <span class="format-tag">PNG</span>
+                    <span class="format-tag">WebP</span>
+                    <span class="format-tag">BMP</span>
+                    <span class="format-tag">Up to 20MB</span>
+                </div>
+                <input type="file" id="file-input" class="file-input" accept="image/*">
+                <div class="upload-preview" id="upload-preview">
+                    <img id="preview-img" src="" alt="Preview">
+                    <div class="file-name" id="file-name"></div>
+                </div>
+            </div>
+            <button class="analyze-btn" id="analyze-btn" onclick="startAnalysis()">
+                🔬 Analyze Image
+            </button>
+        </div>
+
+        <!-- Text Input -->
+        <div id="text-section" class="input-section">
+            <div class="text-input-wrapper">
+                <textarea id="claim-text"
+                    placeholder="Paste a news headline, WhatsApp forward, or specific claim here to verify it against trusted sources..."
+                    oninput="updateCharCount(this)"></textarea>
+                <div class="text-actions">
+                    <span class="char-count" id="char-count">0/5000</span>
+                    <button class="verify-btn" onclick="startTextVerification()">
+                        ✅ Verify Claim
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Loading State -->
+    <section class="loading-section" id="loading-section">
+        <div class="loading-spinner"></div>
+        <h2 class="loading-title">Analyzing Image...</h2>
+        <p class="loading-status" id="loading-status">Initializing forensic pipeline</p>
+        <div class="loading-steps">
+            <div class="loading-step" id="step-exif">
+                <span class="loading-step-icon">📋</span>
+                <span>EXIF Metadata Extraction</span>
+            </div>
+            <div class="loading-step" id="step-ela">
+                <span class="loading-step-icon">🔥</span>
+                <span>Error Level Analysis</span>
+            </div>
+            <div class="loading-step" id="step-tamper">
+                <span class="loading-step-icon">🔎</span>
+                <span>Tampering Detection</span>
+            </div>
+            <div class="loading-step" id="step-ocr">
+                <span class="loading-step-icon">📝</span>
+                <span>OCR Text Extraction</span>
+            </div>
+            <div class="loading-step" id="step-ai">
+                <span class="loading-step-icon">🤖</span>
+                <span>AI Generation Detection</span>
+            </div>
+            <div class="loading-step" id="step-verdict">
+                <span class="loading-step-icon">⚖️</span>
+                <span>Generating AI Verdict</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results-section">
+        <!-- Populated dynamically by JavaScript -->
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <h2 class="features-title">Powered by 6 Analysis Engines</h2>
+        <p class="features-subtitle">Each image is analyzed through multiple forensic techniques for comprehensive
+            results</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">📋</span>
+                <div class="feature-name">EXIF Analysis</div>
+                <div class="feature-desc">Extract and analyze metadata — detect editing software, stripped data, date
+                    tampering</div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔥</span>
+                <div class="feature-name">Error Level Analysis</div>
+                <div class="feature-desc">Detect image splicing through JPEG compression inconsistencies</div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔎</span>
+                <div class="feature-name">Tamper Detection</div>
+                <div class="feature-desc">Copy-move forgery detection, edge anomalies, noise inconsistency analysis
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📝</span>
+                <div class="feature-name">OCR Analysis</div>
+                <div class="feature-desc">Extract text from screenshots and detect misinformation language patterns
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <div class="feature-name">AI Detection</div>
+                <div class="feature-desc">Detect AI-generated images through frequency and texture analysis</div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚖️</span>
+                <div class="feature-name">AI Verdict</div>
+                <div class="feature-desc">LLM-powered contextual verdict with actionable recommendations</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Innovision &copy; 2026 &middot; Built with ❤️ by <strong>Aditya Mehta of DPS Patiala</strong></p>
+    </footer>
+
+    <script src="./app.js"></script>
+</body>
+
+</html>
