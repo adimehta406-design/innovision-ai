@@ -97,40 +97,17 @@ async def generate_verdict(risk_result: dict, analysis_data: dict) -> dict:
     context = "\n".join(context_parts)
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            # Multi-Model Query
-            claude_task = query_model(client, config.CLAUDE_MODEL, config.CLAUDE_API_KEY, context)
-            gemini_task = query_model(client, config.GEMINI_MODEL, config.GEMINI_API_KEY, context)
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            # Single Model Query (Claude Opus 4.6)
+            claude_resp = await query_model(client, config.CLAUDE_MODEL, config.CLAUDE_API_KEY, context)
 
-            results = await asyncio.gather(claude_task, gemini_task, return_exceptions=True)
-            claude_resp, gemini_resp = results
-
-            # Select best response
-            final_text = ""
-            models = []
-            
             if isinstance(claude_resp, str) and claude_resp:
-                final_text = claude_resp
-                models.append("Claude 3.5 Sonnet")
-            
-            if isinstance(gemini_resp, str) and gemini_resp:
-                models.append("Gemini 2.0 Flash")
-                # If Claude failed, use Gemini
-                if not final_text:
-                    final_text = gemini_resp
-                
-                # If both succeeded, we could implement consensus merging here
-                # For now, we prefer Claude as primary but tag Gemini as concurring
-                if final_text and len(models) == 2:
-                    final_text += "\n\n(Analysis verified by both Claude 3.5 Sonnet and Gemini 2.0 Flash)"
-
-            if final_text:
-                result["ai_analysis"] = final_text
+                result["ai_analysis"] = claude_resp
                 result["generated"] = True
-                result["models_used"] = models
+                result["models_used"] = ["Claude Opus 4.6"]
 
                 # Extract verdict from response
-                ai_lower = final_text.lower()
+                ai_lower = claude_resp.lower()
                 if "highly suspicious" in ai_lower:
                     result["verdict"] = "HIGHLY SUSPICIOUS"
                 elif "likely manipulated" in ai_lower:

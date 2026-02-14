@@ -20,9 +20,10 @@ const resultsSection = document.getElementById('results-section');
 const featuresSection = document.getElementById('features');
 
 // === CONFIGURATION ===
-// CHANGE THIS URL AFTER DEPLOYING BACKEND TO RAILWAY
-// Example: const API_BASE_URL = 'https://innovision-production.up.railway.app';
-const API_BASE_URL = 'https://aditya-5-bcd2.onrender.com'; // Render Deployment
+// If running locally, use current origin. If on Surge, use Render backend.
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? window.location.origin
+    : 'https://innovisionai.onrender.com'; // Production Backend URL
 
 // ============ DRAG & DROP ============
 uploadZone.addEventListener('dragover', (e) => {

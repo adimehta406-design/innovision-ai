@@ -9,7 +9,7 @@ def verify_api():
     
     try:
         files = {'file': open('test_fake.jpg', 'rb')}
-        response = httpx.post(url, files=files, timeout=60.0)
+        response = httpx.post(url, files=files, timeout=120.0)
         
         if response.status_code == 200:
             data = response.json()
