@@ -1,13 +1,9 @@
-# TruthLens artifacts
 __pycache__/
 *.pyc
-*.pyo
-.env
 venv/
-env/
+.env
 uploads/
-*.egg-info/
-dist/
-build/
-.pytest_cache/
-ngrok_url.txt
+test_fake.jpg
+multi_model_test_output.txt
+verification_result.txt
+server_log.txt

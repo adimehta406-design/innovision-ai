@@ -20,7 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from analyzers.exif_analyzer import extract_exif
 from analyzers.ela_analyzer import perform_ela
 from analyzers.tamper_detector import detect_tampering
-from analyzers.ocr_analyzer import analyze_ocr
+from analyzers.ocr_analyzer import extract_text_from_image, analyze_ocr_ai
 from analyzers.ai_detector import detect_ai_generated
 from analyzers.risk_scorer import compute_risk_score
 from analyzers.verdict_generator import generate_verdict
@@ -152,14 +152,16 @@ async def analyze_image(file: UploadFile = File(...)):
         tamper_result = detect_tampering(image_bytes)
 
         logger.info(f"[{analysis_id}] Running OCR analysis...")
-        ocr_result = analyze_ocr(image_bytes)
+        # 1. Extract Text
+        extracted_text = extract_text_from_image(image_bytes)
+        # 2. Analyze Text with AI
+        ocr_result = await analyze_ocr_ai(extracted_text)
 
         logger.info(f"[{analysis_id}] Running AI detection...")
         ai_result = detect_ai_generated(image_bytes)
         
         # === Text Verification (Universal Engine) ===
         text_verification = None
-        extracted_text = ocr_result.get("text_extracted", "")
         # Only verify if significant text found (e.g., > 30 chars)
         if len(extracted_text.strip()) > 30:
             logger.info(f"[{analysis_id}] Verifying extracted text...")
@@ -195,6 +197,22 @@ async def analyze_image(file: UploadFile = File(...)):
         }
         verdict_result = await generate_verdict(risk_result, analysis_data)
 
+        # === Generate Reverse Search Links ===
+        # In a real app with public URL, we'd pass the image URL. 
+        # Here we use the text query or filename as a fallback proxy for the link.
+        search_query = extracted_text[:100] if len(extracted_text) > 5 else file.filename
+        reverse_search_links = {
+            "google": f"https://www.google.com/search?q={search_query}&tbm=isch",
+            "bing": f"https://www.bing.com/images/search?q={search_query}",
+            "yandex": f"https://yandex.com/images/search?text={search_query}",
+            "tineye": "https://tineye.com/" # Requires upload
+        }
+
+        # === Generate Share Summary ===
+        verdict_text = verdict_result['verdict']
+        share_emoji = "✅" if "AUTHENTIC" in verdict_text else "⚠️" 
+        share_summary = f"{share_emoji} TruthLens Alert: Image analyzed as {verdict_text}. Risk Score: {risk_result['overall_score']}%. Verified by AI."
+
         # === Build Response ===
         elapsed = round(time.time() - start_time, 2)
         logger.info(f"[{analysis_id}] Analysis complete in {elapsed}s | Score: {risk_result['overall_score']} | Verdict: {verdict_result['verdict']}")
@@ -228,7 +246,11 @@ async def analyze_image(file: UploadFile = File(...)):
             "noise_map_image": f"data:image/png;base64,{tamper_result['noise_map_b64']}" if tamper_result.get("noise_map_b64") else None,
             "ocr": ocr_result,
             "ai_detection": ai_result,
-            "text_verification": text_verification
+            "text_verification": text_verification,
+            
+            # New Features
+            "reverse_search_links": reverse_search_links,
+            "share_summary": share_summary
         }
 
         # Convert numpy types to native Python types

@@ -1,4 +1,4 @@
-
+ 
 import httpx
 import json
 import sys
@@ -9,7 +9,7 @@ def verify_api():
     
     try:
         files = {'file': open('test_fake.jpg', 'rb')}
-        response = httpx.post(url, files=files, timeout=30.0)
+        response = httpx.post(url, files=files, timeout=60.0)
         
         if response.status_code == 200:
             data = response.json()
@@ -44,6 +44,19 @@ def verify_api():
                 print("\n✅ SUCCESS: High risk correctly identified.")
             else:
                 print(f"\n⚠️ WARNING: Risk score {score} lower than expected for fake image.")
+
+            # Check New Features
+            print("\n------------------------------------------------")
+            print("Checking InnoVision Feature Upgrades:")
+            if "share_summary" in data:
+                print(f"✅ Share Summary Generated: {data['share_summary']}")
+            else:
+                print("❌ Share Summary Missing")
+            
+            if "reverse_search_links" in data:
+                print(f"✅ Reverse Search Links: {list(data['reverse_search_links'].keys())}")
+            else:
+                print("❌ Reverse Search Links Missing")
                 
         else:
             print(f"❌ API Error: {response.status_code}")

@@ -22,7 +22,7 @@ const featuresSection = document.getElementById('features');
 // === CONFIGURATION ===
 // CHANGE THIS URL AFTER DEPLOYING BACKEND TO RAILWAY
 // Example: const API_BASE_URL = 'https://innovision-production.up.railway.app';
-const API_BASE_URL = 'https://nonaesthetical-karina-slinkingly.ngrok-free.dev'; // Ngrok Tunnel
+const API_BASE_URL = 'https://aditya-5-bcd2.onrender.com'; // Render Deployment
 
 // ============ DRAG & DROP ============
 uploadZone.addEventListener('dragover', (e) => {
